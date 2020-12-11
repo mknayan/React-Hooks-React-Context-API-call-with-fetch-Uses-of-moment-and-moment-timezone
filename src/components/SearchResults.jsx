@@ -1,14 +1,21 @@
 import React, { Suspense, useContext, Fragment } from "react";
+import cityTimezones from "city-timezones";
 
 import { GlobalContext } from '../context/GlobalState';
 
 const SearchResults = () => {
 
-    const { updateSelectedCountry, updateSelectedTimeZone, countries } = useContext(GlobalContext);
+    const { updateSelectedCountry, updateSelectedTimeZone, countries, selectedCountry } = useContext(GlobalContext);
 
     const handleClick = (data) => {
         updateSelectedCountry(data)
-        updateSelectedTimeZone(data.timezones[0])
+
+        const timezoneArray = cityTimezones.lookupViaCity(data.capital)
+        let timezone = ''
+        if (timezoneArray && timezoneArray.length > 0) {
+            timezone = timezoneArray[0].timezone
+        }
+        updateSelectedTimeZone(timezone)
     }
 
     return (
@@ -23,7 +30,7 @@ const SearchResults = () => {
                                     {
                                         countries.map((countries_single, countries_index) => {
                                             return (
-                                                <li key={`country-${countries_index}`} onClick={() => handleClick(countries_single)}>{countries_single.name}</li>
+                                                <li key={`country-${countries_index}`} onClick={() => handleClick(countries_single)} className={selectedCountry != '' ? (selectedCountry.name == countries_single.name ? 'active' : '') : ''}>{countries_single.name}</li>
                                             )
                                         })
                                     }

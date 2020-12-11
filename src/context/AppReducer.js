@@ -1,7 +1,6 @@
 export default (state, action) => {
     switch (action.type) {
         case 'UPDATE_COUNTRY':
-            console.log('UPDATE_COUNTRY', action.payload)
             return {
                 ...state,
                 countries: action.payload

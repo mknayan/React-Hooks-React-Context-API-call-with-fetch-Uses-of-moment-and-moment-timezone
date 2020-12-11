@@ -1,45 +1,44 @@
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Fragment, Suspense, useContext } from "react";
 
-const fetchCountry = query => {
-    const url = 'https://restcountries.eu/rest/v2/capital/' + query;
-    return fetch(url).then(function (response) {
-        return response.json();
-    })
-};
+import CountryTime from './CountryTime';
+import { GlobalContext } from '../context/GlobalState';
 
 const CountryDetails = () => {
 
-    const [query, setQuery] = useState('dhaka');
-    const [country, setCountry] = useState({});
-
-    useEffect(() => {
-        async function fetchData() {
-            if (query != '') {
-                await fetchCountry(query).then(function (data) {
-                    // console.log('Request succeeded with JSON response', data);
-                    if (data.status) {
-                        setCountry([])
-                    } else {
-                        setCountry(country)
-                    }
-                })
-            }
-        }
-        fetchData()
-    }, [query]);
+    const { selectedCountry } = useContext(GlobalContext);
 
     return (
         <Suspense>
             <div className="col-md-4 left-border">
                 <p className="text-center"><b>Country Details</b></p>
-                <div className="text-center">
-                    Country Name: Bangladesh<br />
-                    Capital: Dhaka<br />
-                    Languages: Bengali<br />
-                    Flag: <img src="https://restcountries.eu/data/bgd.svg" />
-                </div>
-                <div className="text-center">Country Time : 2020-12-11 00:37:19 (Los Angeles)</div>
-                {/* <GetTimeNow /> */}
+                {
+                    selectedCountry != '' ?
+                        <Fragment>
+                            <div className="text-center">
+                                Country Name: {selectedCountry.name}<br />
+                                Capital: {selectedCountry.capital}<br />
+                                Languages:&nbsp;
+                                {
+                                    selectedCountry.languages && selectedCountry.languages.length > 0 ?
+                                        <Fragment>
+                                            {
+                                                selectedCountry.languages.map((languages_single, languages_index) => {
+                                                    return languages_single.name + ' '
+                                                })
+                                            }
+                                        </Fragment>
+                                        : ''
+                                }
+                                <br />
+                                Flag: <img src={selectedCountry.flag} />
+                            </div>
+                            <CountryTime />
+                        </Fragment>
+                        :
+                        ''
+                }
+
+
             </div>
         </Suspense>
     )
