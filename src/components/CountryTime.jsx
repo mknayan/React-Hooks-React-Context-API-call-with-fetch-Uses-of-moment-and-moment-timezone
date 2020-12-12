@@ -5,25 +5,36 @@ import cityTimezones from "city-timezones";
 
 import { GlobalContext } from '../context/GlobalState';
 
-const GetTimeNow = function (selectedTimezone) {
-    setInterval(() => {
-        if (selectedTimezone != '') {
-            const time_moment = moment().tz(selectedTimezone).format("hh:mm:ss a");
-            const elementExists = document.getElementById("timenow");
-            if (elementExists) {
-                document.getElementById("timenow").innerHTML = time_moment;
-            }
+let selectedTimezoneVar = ''
+let GetTimeNow = setInterval(function () {
+    const elementExists = document.getElementById("timenow");
+    if (elementExists) {
+        if (selectedTimezoneVar != '') {
+            const time_moment = moment().tz(selectedTimezoneVar).format("hh:mm:ss a");
+            document.getElementById("timenow").innerHTML = time_moment;
+        } else {
+            document.getElementById("timenow").innerHTML = "Timezone not found";
         }
-    }, 1000)
-}
+    }
+}, 1000)
 
 const CountryTime = () => {
 
     const { selectedTimezone } = useContext(GlobalContext);
-
+    selectedTimezoneVar = selectedTimezone;
     useEffect(() => {
+        let GetTimeNow = setInterval(function () {
+            const elementExists = document.getElementById("timenow");
+            if (elementExists) {
+                if (selectedTimezoneVar != '') {
+                    const time_moment = moment().tz(selectedTimezoneVar).format("hh:mm:ss a");
+                    document.getElementById("timenow").innerHTML = time_moment;
+                } else {
+                    document.getElementById("timenow").innerHTML = "Timezone not found";
+                }
+            }
+        }, 1000)
         clearInterval(GetTimeNow)
-        GetTimeNow(selectedTimezone)
     }, [selectedTimezone]);
 
     return (
